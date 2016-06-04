@@ -1,6 +1,10 @@
 class Bencode {
 
-method bencode($var) {
+method bencode($string) {
+	encode($string);
+}
+
+sub encode($var) {
 	given $var.WHAT.gist {
 		when "(Str)" {
 		   "{$var.chars}" ~ ":" ~ "$var";
@@ -11,7 +15,7 @@ method bencode($var) {
 		when "(Array)" {
    	   my $res;
 		   for 0..$var.elems-1 -> $v {
-			  		$res ~= "{bencode($var[$v])}";
+			  		$res ~= "{encode($var[$v])}";
 			 }
 			 "l" ~ $res ~ "e" ;
     }
@@ -19,7 +23,7 @@ method bencode($var) {
 			 my $res;
 			 my @a = $var.keys;
 			 for 0..$var.elems-1 -> $v {
-				   $res ~= "{bencode(@a[$v])}" ~ "{bencode($var{@a[$v]})}";
+				   $res ~= "{encode(@a[$v])}" ~ "{encode($var{@a[$v]})}";
 			}
 			"d" ~ $res ~ "e";
 		}
